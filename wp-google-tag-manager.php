@@ -58,6 +58,7 @@ class WpGoogleTagManager {
     add_action('admin_init', array(&$this,"admin_init"));
     add_action('admin_menu', array(&$this,"admin_menu"));
     add_action( 'wp_footer', array(&$this,"output_container") );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 	}
 
   /**
@@ -101,8 +102,6 @@ class WpGoogleTagManager {
    * admin_init hook
    */
   public function admin_init() {
-    wp_enqueue_script('thickbox', null,  array('jquery'));
-    wp_enqueue_style('thickbox.css', '/'.WPINC.'/js/thickbox/thickbox.css', null, '1.0');
 
 		$this->register_settings();
 
@@ -114,6 +113,19 @@ class WpGoogleTagManager {
     }
   }
 
+	/**
+	 * Enqueue Admin Scripts & Styles
+	 *
+	 * @param  string  $hook  Admin page hook.
+	 */
+	public function enqueue_admin_scripts( $hook ) {
+
+		if ( 'settings_page_wp_google_tag_manager' == $hook ) {
+			wp_enqueue_script( 'thickbox', null,  array( 'jquery' ) );
+			wp_enqueue_style( 'thickbox.css', includes_url( '/js/thickbox/thickbox.css' ), null, '1.0' );
+		}
+
+	}
 
   /**
    * @return void

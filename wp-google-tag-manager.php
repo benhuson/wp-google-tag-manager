@@ -44,7 +44,6 @@
 class WpGoogleTagManager {
 
   private $container_id;
-  private $updated = false;
   private $called = false;
 
   /**
@@ -105,6 +104,8 @@ class WpGoogleTagManager {
     wp_enqueue_script('thickbox', null,  array('jquery'));
     wp_enqueue_style('thickbox.css', '/'.WPINC.'/js/thickbox/thickbox.css', null, '1.0');
 
+		$this->register_settings();
+
     global $current_user;
     $user_id = $current_user->ID;
     /* If user clicks to ignore the notice, add that to their user meta */
@@ -120,29 +121,14 @@ class WpGoogleTagManager {
    * admin_menu hook
    */
   public function admin_menu() {
-    $this->update_container_id();
+
     global $pagenow;
+
     if($this->container_id == '' && $pagenow == 'index.php') {
       add_action('admin_notices', array(&$this,'show_missing_id_warning'));
+
     }
     add_options_page(__('WP Google Tag Manager','wp_google_tag_manager'),__('WP Google Tag Manager','wp_google_tag_manager'),"manage_options","wp_google_tag_manager",array(&$this,"settings_menu"));
-  }
-
-  /**
-   * @return void
-   *
-   * update container_id
-   */
-  private function update_container_id() {
-    if(isset($_POST['wp_google_tag_manager_container_id'])) {
-      $container_id = esc_attr($_POST['wp_google_tag_manager_container_id']);
-      if($container_id != $this->container_id) {
-        if(update_option('wp_google_tag_manager_container_id',$container_id)) {
-          $this->container_id = $container_id;
-          $this->updated = true;
-        }
-      }
-    }
   }
 
   /**
@@ -153,21 +139,15 @@ class WpGoogleTagManager {
   public function settings_menu() {
     ?>
       <div class="wrap">
-        <?php if($this->updated) {
-          echo '<div id="message" class="updated"><p>'.__('Settings saved succesfully','wp_google_tag_manager').'</p></div>';
-        }?>
         <h2><?php echo __('WP Google Tag Manager','wp_google_tag_manager'); ?></h2>
-        <form method="post" action="">
-          <table class="form-table">
-            <tr valign="top">
-              <th scope="row"><label for="wp_google_tag_manager_container_id"><?php echo __('Container ID','wp_google_tag_manager'); ?></label></th>
-              <td><input type="text" id="wp_google_tag_manager_container_id" name="wp_google_tag_manager_container_id" placeholder="GTM-ABCD" value="<?php echo $this->container_id; ?>"></td>
-            </tr>
-            <tr valign="top">
-              <th scope="row">&nbsp;</th>
-              <td><input type="submit" class="button-primary" id="wp_google_tag_manager_submit" name="wp_google_tag_manager_submit" placeholder="GTM-ABCD" value="<?php echo __('save','wp_google_tag_manager'); ?>"></td>
-            </tr>
-          </table>
+        <form method="post" action="options.php">
+				<?php
+
+				settings_fields( 'wp-google-tag-manager' );
+				do_settings_sections( 'wp-google-tag-manager' );
+
+				?>
+				<p class="submit"><input type="submit" id="wp_google_tag_manager_submit" class="button button-primary" value="<?php _e( 'Save Changes' ); ?>"></p>
         </form>
         <p>
           <?php echo __('You can find your Google tag manager container id in','wp_google_tag_manager').' <br>"Container" --> "Container Settings" --> "Container Snippet" --> iframe src="//www.googletagmanager.com/ns.html?id=<strong>GTM-1A23</strong>"'; ?><br>
@@ -179,6 +159,41 @@ class WpGoogleTagManager {
       </div>
     <?php
   }
+
+	/**
+	 * Register Settings
+	 */
+	public function register_settings() {
+
+		// Add Code Setting
+		add_settings_section(
+			'wp_google_tag_manager_code',
+			'',
+			create_function( '', 'return "";' ),
+			'wp-google-tag-manager'
+		);
+
+		// Add Code Field
+		add_settings_field(
+			'wp_google_tag_manager_container_id',
+			__( 'Container ID', 'wp_google_tag_manager' ),
+			array( $this, 'container_id_field' ),
+			'wp-google-tag-manager',
+			'wp_google_tag_manager_code'
+		);
+
+		register_setting( 'wp-google-tag-manager', 'wp_google_tag_manager_container_id', 'sanitize_text_field' );
+
+	}
+
+	/**
+	 * Container ID Field
+	 */
+	public function container_id_field() {
+
+		printf( '<input type="text" id="wp_google_tag_manager_container_id" name="wp_google_tag_manager_container_id" placeholder="GTM-ABCD" value="%s">', esc_attr( $this->container_id ) );
+
+	}
 
   public function output_manual() {
     if(!$this->called) {

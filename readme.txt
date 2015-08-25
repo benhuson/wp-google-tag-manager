@@ -88,7 +88,7 @@ See Screenshot 3.
 
 == Screenshots ==
 
-1. Wp Google Tag Manager settings
+1. WP Google Tag Manager settings
 2. Container id location 1
 3. Container id location 2
 

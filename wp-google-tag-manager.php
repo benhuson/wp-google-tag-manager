@@ -152,7 +152,7 @@ class WpGoogleTagManager {
     ?>
       <div class="wrap">
         <h2><?php echo __('WP Google Tag Manager','wp_google_tag_manager'); ?></h2>
-        <form method="post" action="options.php">
+			<form method="post" action="options.php">
 				<?php
 
 				settings_fields( 'wp-google-tag-manager' );
@@ -160,14 +160,13 @@ class WpGoogleTagManager {
 
 				?>
 				<p class="submit"><input type="submit" id="wp_google_tag_manager_submit" class="button button-primary" value="<?php _e( 'Save Changes' ); ?>"></p>
-        </form>
-        <p>
-          <?php echo __('You can find your Google tag manager container id in','wp_google_tag_manager').' <br>"Container" --> "Container Settings" --> "Container Snippet" --> iframe src="//www.googletagmanager.com/ns.html?id=<strong>GTM-1A23</strong>"'; ?><br>
-          <a class="thickbox" href="<?php echo plugin_dir_url(__FILE__)."/img/container1.jpg" ?>" title="Where you can find your container id 1"><?php echo __('Image','wp_google_tag_manager');?></a>
-        </p><p>
-          <?php echo __('Or in','wp_google_tag_manager').' <br>"Versions" --> highestNumber --> "Container Public ID"<br>'; ?>
-          <a class="thickbox" href="<?php echo plugin_dir_url(__FILE__)."/img/container2.jpg" ?>" title="Where you can find your container id 2"><?php echo __('Image','wp_google_tag_manager');?></a>
-        </p>
+			</form>
+			<h3><?php _e( 'Where can I find my Container ID?', 'wp_google_tag_manager' ); ?></h3>
+			<p><?php echo __( 'You can find your Google tag manager container id on your main Tag Manager accounts page or in the Tag Manager Admin:', 'wp_google_tag_manager' ) . '<br />' . sprintf( __( 'Admin > Container > Install Google Tag Manager > %s' ), '<span class="code">iframe src="//www.googletagmanager.com/ns.html?id=<strong>GTM-1A23</strong></span>"' ); ?></p>
+			<p>
+				<a class="thickbox" href="<?php echo plugin_dir_url( __FILE__ ) . 'img/container-id-account.png'; ?>" title="<?php esc_attr_e( 'Tag Manager accounts page', 'wp_google_tag_manager' ); ?>"><img src="<?php echo plugin_dir_url( __FILE__ ) . 'img/container-id-account.png'; ?>" width="250" valign="top" style="border: 1px solid #ddd; margin: 0 10px 10px 0;" /></a>
+				<a class="thickbox" href="<?php echo plugin_dir_url( __FILE__ ) . 'img/container-id-install.png'; ?>" title="<?php esc_attr_e( 'Tag Manager Admin - Install Google Tag Manager', 'wp_google_tag_manager' ); ?>"><img src="<?php echo plugin_dir_url( __FILE__ ) . 'img/container-id-install.png'; ?>" width="250" valign="top" style="border: 1px solid #ddd; margin: 0 10px 10px 0;" /></a>
+			</p>
       </div>
     <?php
   }
@@ -203,7 +202,7 @@ class WpGoogleTagManager {
 	 */
 	public function container_id_field() {
 
-		printf( '<input type="text" id="wp_google_tag_manager_container_id" name="wp_google_tag_manager_container_id" placeholder="GTM-ABCD" value="%s">', esc_attr( $this->container_id ) );
+		printf( '<input type="text" id="wp_google_tag_manager_container_id" name="wp_google_tag_manager_container_id" placeholder="GTM-1A23" value="%s">', esc_attr( $this->container_id ) );
 
 	}
 
